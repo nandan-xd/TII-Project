@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5"><div class="col-md-5 col-lg-4"><div class="card p-4"><h1 class="h4 fw-bold">Admin Login</h1><p class="muted small mb-4">Club admins manage only their own events.</p><form method="POST"><input class="form-control mb-2" name="username" placeholder="Username" required><input class="form-control mb-3" type="password" name="password" placeholder="Password" required><button class="btn btn-primary w-100">Sign in</button></form><a href="{{ url_for('login') }}" class="btn btn-outline-secondary w-100 mt-2">Back to Login</a></div></div></div>
+{% endblock %}

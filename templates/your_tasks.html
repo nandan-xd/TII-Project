@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Tasks | Student TaskBoard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end page-header"><div><h1>Your Tasks</h1><p>Academic work in one place.</p></div><form method="POST" action="{{ url_for('sync_teams') }}"><button class="btn btn-primary btn-sm">↻ Sync Teams</button></form></div>
+{% set urgent = tasks|selectattr('priority','in',['Very High','High','Date Missed'])|list %}
+{% if urgent|length %}<div class="alert alert-warning"><strong>Deadline alert:</strong> You have {{ urgent|length }} task(s) that need attention soon.</div>{% endif %}
+<div class="row g-3">
+{% if not tasks %}<div class="col-12"><div class="card p-5 text-center muted">No tasks yet. Add one or sync Teams.</div></div>{% endif %}
+{% for task in tasks %}
+<div class="col-12"><div class="card p-3"><div class="row align-items-center g-2">
+<div class="col-lg-5"><div class="fw-bold">{{ task.title }}</div><div class="small muted">{{ task.subject or 'Academic task' }} · {{ task.source }}</div></div>
+<div class="col-lg-3 small">Due <strong>{{ task.date }}</strong></div>
+<div class="col-lg-2"><span class="badge rounded-pill {% if task.priority in ['Very High','Date Missed'] %}text-bg-danger{% elif task.priority=='High' %}text-bg-warning{% elif task.priority=='Medium' %}badge-soft{% else %}text-bg-success{% endif %}">{{ task.priority }}</span></div>
+<div class="col-lg-2 text-lg-end">
+{% if task.status != 'Completed' %}<form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}" class="d-inline"><button class="btn btn-sm btn-outline-primary">Done</button></form>{% else %}<span class="badge text-bg-success">Completed</span>{% endif %}
+<a class="btn btn-sm btn-outline-danger" href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a></div>
+</div>{% if task.description %}<div class="small muted mt-2">{{ task.description }}</div>{% endif %}</div></div>
+{% endfor %}
+</div>
+<div class="small muted mt-4">Teams Sync is currently running in demo mode. It is isolated so Microsoft Graph can replace it later without changing the dashboard.</div>
+{% endblock %}

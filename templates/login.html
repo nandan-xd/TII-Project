@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Login | Student TaskBoard{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5"><div class="col-md-5 col-lg-4">
+<div class="card p-4">
+<h1 class="h4 fw-bold mb-2">Student Login</h1><p class="muted small mb-4">Use your existing student ID for now. NMIMS/Microsoft login can be added later.</p>
+<form method="POST"><label class="form-label small fw-bold">Student ID</label><input class="form-control mb-3" name="user_id" placeholder="Enter student ID" required><button class="btn btn-primary w-100">Continue</button></form>
+<div class="text-center mt-4"><a class="small text-decoration-none" href="{{ url_for('admin_login') }}">Admin login</a></div>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Add Task{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7"><div class="page-header"><h1>Add a task</h1><p>Add an academic task manually. Tasks from Teams will appear automatically when connected.</p></div>
+<div class="card p-4"><form method="POST">
+<div class="mb-3"><label class="form-label small fw-bold">Task</label><input class="form-control" name="ts" placeholder="e.g. PR Assignment 2" required></div>
+<div class="row"><div class="col-md-6 mb-3"><label class="form-label small fw-bold">Subject</label><input class="form-control" name="subject" placeholder="e.g. Product Realization"></div><div class="col-md-6 mb-3"><label class="form-label small fw-bold">Due date</label><input type="date" class="form-control" name="dt" required></div></div>
+<div class="mb-3"><label class="form-label small fw-bold">Description</label><textarea class="form-control" name="ds" rows="3" placeholder="Optional details"></textarea></div>
+<button class="btn btn-primary">Add Task</button></form></div></div></div>
+{% endblock %}
