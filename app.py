@@ -130,6 +130,46 @@ def admin_required(view):
 def get_admin():
     return db.session.get(Admin, session.get('admin_id')) if session.get('admin_id') else None
 
+@app.context_processor
+def inject_notifications():
+    notifications = []
+
+    if session.get('user_id'):
+        user_id = session['user_id']
+
+        # Pending tasks due within the next 7 days
+        tasks = Tasks.query.filter_by(
+            user_id=user_id,
+            status='Pending'
+        ).order_by(Tasks.date.asc()).all()
+
+        for task in tasks:
+            notifications.append({
+                'type': 'task',
+                'title': task.title,
+                'message': f'Due {task.date}',
+                'priority': task.priority
+            })
+
+        # Upcoming events
+        today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
+
+        upcoming_events = Event.query.filter(
+            Event.event_date >= today.strftime('%Y-%m-%d')
+        ).order_by(Event.event_date.asc()).limit(5).all()
+
+        for event in upcoming_events:
+            notifications.append({
+                'type': 'event',
+                'title': event.title,
+                'message': f'{event.event_date} · {event.club_name}',
+                'priority': 'event'
+            })
+
+    return {
+        'notifications': notifications[:8],
+        'notification_count': len(notifications[:8])
+    }
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])

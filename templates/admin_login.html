@@ -1,5 +1,142 @@
 {% extends "base.html" %}
+
 {% block title %}Admin Login{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center mt-5"><div class="col-md-5 col-lg-4"><div class="card p-4"><h1 class="h4 fw-bold">Admin Login</h1><p class="muted small mb-4">Club admins manage only their own events.</p><form method="POST"><input class="form-control mb-2" name="username" placeholder="Username" required><input class="form-control mb-3" type="password" name="password" placeholder="Password" required><button class="btn btn-primary w-100">Sign in</button></form><a href="{{ url_for('login') }}" class="btn btn-outline-secondary w-100 mt-2">Back to Login</a></div></div></div>
+
+<div class="row justify-content-center mt-4 mt-md-5">
+
+    <div class="col-md-6 col-lg-5">
+
+        <div class="card">
+
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Header -->
+
+                <div style="
+                    display: inline-block;
+                    background: var(--blue);
+                    color: white;
+                    border: 2px solid var(--black);
+                    padding: 6px 9px;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: .5px;
+                    margin-bottom: 20px;
+                ">
+                    ADMIN ACCESS
+                </div>
+
+
+                <h1 style="
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: var(--black);
+                    letter-spacing: -1px;
+                    margin-bottom: 8px;
+                ">
+                    Admin Login
+                </h1>
+
+
+                <p
+                    class="muted"
+                    style="
+                        font-size: 10px;
+                        line-height: 1.8;
+                        margin-bottom: 28px;
+                    "
+                >
+                    Club admins manage only their own events.
+                </p>
+
+
+                <!-- Login form -->
+
+                <form method="POST">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input
+                            class="form-control"
+                            name="username"
+                            placeholder="Username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input
+                            class="form-control"
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary w-100"
+                        type="submit"
+                        style="padding: 12px;"
+                    >
+                        Sign in →
+                    </button>
+
+                </form>
+
+
+                <!-- Back -->
+
+                <div
+                    style="
+                        border-top: 2px solid var(--black);
+                        margin-top: 28px;
+                        padding-top: 18px;
+                    "
+                >
+
+                    <a
+                        href="{{ url_for('login') }}"
+                        class="btn btn-outline-primary w-100"
+                    >
+                        ← Back to Login
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="text-center mt-4"
+            style="
+                color: var(--muted);
+                font-size: 8px;
+                letter-spacing: .3px;
+            "
+        >
+            EVENT MANAGEMENT · STUDENT TASKBOARD
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

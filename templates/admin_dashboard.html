@@ -1,7 +1,288 @@
 {% extends "base.html" %}
+
 {% block title %}Admin | Student TaskBoard{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-end page-header"><div><h1>Admin Dashboard</h1><p>{% if admin.role=='super_admin' %}Super Admin · Manage all clubs and events{% else %}{{ admin.club_name }} · Club Admin{% endif %}</p></div><div><a class="btn btn-primary btn-sm" href="{{ url_for('admin_create_event') }}">+ New Event</a>{% if admin.role=='super_admin' %} <a class="btn btn-outline-primary btn-sm" href="{{ url_for('admin_create_club') }}">+ New Club</a>{% endif %}</div></div>
-<div class="row g-3 mb-4"><div class="col-md-4"><div class="card p-3"><div class="small muted">Published events</div><div class="fs-3 fw-bold">{{ events|length }}</div></div></div><div class="col-md-4"><div class="card p-3"><div class="small muted">Scope</div><div class="fw-bold mt-1">{% if admin.role=='super_admin' %}All clubs{% else %}{{ admin.club_name }}{% endif %}</div></div></div></div>
-<div class="card p-4"><div class="section-title mb-3">Your events</div>{% if not events %}<div class="muted small">No events yet.</div>{% endif %}{% for event in events %}<div class="border-bottom py-3"><div class="row align-items-center"><div class="col-md-5"><strong>{{ event.title }}</strong><div class="small muted">{{ event.club_name }} · {{ event.event_date }}{% if event.event_time %} · {{ event.event_time }}{% endif %}</div></div><div class="col-md-4 small"><a href="{{ url_for('admin_registrations', event_id=event.id) }}" class="text-decoration-none">View registrations</a></div><div class="col-md-3 text-md-end"><form method="POST" action="{{ url_for('admin_delete_event', event_id=event.id) }}"><button class="btn btn-sm btn-outline-danger">Delete</button></form></div></div></div>{% endfor %}</div>
+
+<div class="page-header">
+
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+
+        <div>
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                {% if admin.role=='super_admin' %}
+                    Super Admin · Manage all clubs and events
+                {% else %}
+                    {{ admin.club_name }} · Club Admin
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2">
+
+            <a
+                class="btn btn-primary"
+                href="{{ url_for('admin_create_event') }}"
+            >
+                + New Event
+            </a>
+
+            {% if admin.role=='super_admin' %}
+
+            <a
+                class="btn btn-outline-primary"
+                href="{{ url_for('admin_create_club') }}"
+            >
+                + New Club
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Summary -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+
+        <div class="card h-100">
+
+            <div class="card-body p-4">
+
+                <div
+                    style="
+                        color: var(--muted);
+                        font-size: 9px;
+                        text-transform: uppercase;
+                        letter-spacing: .7px;
+                        margin-bottom: 8px;
+                    "
+                >
+                    Published events
+                </div>
+
+                <div
+                    style="
+                        color: var(--black);
+                        font-size: 30px;
+                        font-weight: 700;
+                        line-height: 1;
+                    "
+                >
+                    {{ events|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <div
+            class="card h-100"
+            style="
+                box-shadow: 7px 7px 0 var(--blue) !important;
+            "
+        >
+
+            <div class="card-body p-4">
+
+                <div
+                    style="
+                        color: var(--muted);
+                        font-size: 9px;
+                        text-transform: uppercase;
+                        letter-spacing: .7px;
+                        margin-bottom: 8px;
+                    "
+                >
+                    Scope
+                </div>
+
+                <div
+                    style="
+                        color: var(--black);
+                        font-size: 13px;
+                        font-weight: 700;
+                    "
+                >
+                    {% if admin.role=='super_admin' %}
+                        All clubs
+                    {% else %}
+                        {{ admin.club_name }}
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Events -->
+
+<div class="card">
+
+    <div class="card-body p-4 p-md-5">
+
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2px solid var(--black);
+                padding-bottom: 14px;
+                margin-bottom: 5px;
+            "
+        >
+
+            <div class="section-title">
+                Your events
+            </div>
+
+            <div
+                style="
+                    background: var(--orange);
+                    color: var(--black);
+                    border: 2px solid var(--black);
+                    padding: 4px 7px;
+                    font-size: 8px;
+                    font-weight: 700;
+                "
+            >
+                EVENT MANAGEMENT
+            </div>
+
+        </div>
+
+
+        {% if not events %}
+
+        <div
+            class="muted"
+            style="
+                font-size: 10px;
+                padding: 22px 0 8px;
+            "
+        >
+            No events yet.
+        </div>
+
+        {% endif %}
+
+
+        {% for event in events %}
+
+        <div
+            style="
+                padding: 20px 0;
+                border-bottom: 1px solid var(--light-line);
+            "
+        >
+
+            <div class="row align-items-center g-3">
+
+
+                <!-- Event -->
+
+                <div class="col-md-5">
+
+                    <div
+                        style="
+                            font-size: 12px;
+                            font-weight: 700;
+                            color: var(--black);
+                            margin-bottom: 6px;
+                        "
+                    >
+                        {{ event.title }}
+                    </div>
+
+                    <div
+                        class="muted"
+                        style="font-size: 9px;"
+                    >
+                        {{ event.club_name }}
+                        ·
+                        {{ event.event_date }}
+
+                        {% if event.event_time %}
+                            · {{ event.event_time }}
+                        {% endif %}
+                    </div>
+
+                </div>
+
+
+                <!-- Registrations -->
+
+                <div class="col-md-4">
+
+                    <a
+                        href="{{ url_for('admin_registrations', event_id=event.id) }}"
+                        style="
+                            color: var(--blue);
+                            font-size: 9px;
+                            font-weight: 700;
+                            text-decoration: none;
+                        "
+                    >
+                        View registrations ↗
+                    </a>
+
+                </div>
+
+
+                <!-- Delete -->
+
+                <div class="col-md-3 text-md-end">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('admin_delete_event', event_id=event.id) }}"
+                    >
+
+                        <button
+                            class="btn btn-sm"
+                            type="submit"
+                            style="
+                                background: white;
+                                color: var(--black);
+                                border: 2px solid var(--black);
+                            "
+                        >
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}

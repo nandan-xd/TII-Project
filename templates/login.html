@@ -1,10 +1,137 @@
 {% extends "base.html" %}
+
 {% block title %}Login | Student TaskBoard{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center mt-5"><div class="col-md-5 col-lg-4">
-<div class="card p-4">
-<h1 class="h4 fw-bold mb-2">Student Login</h1><p class="muted small mb-4">Use your existing student ID for now. NMIMS/Microsoft login can be added later.</p>
-<form method="POST"><label class="form-label small fw-bold">Student ID</label><input class="form-control mb-3" name="user_id" placeholder="Enter student ID" required><button class="btn btn-primary w-100">Continue</button></form>
-<div class="text-center mt-4"><a class="small text-decoration-none" href="{{ url_for('admin_login') }}">Admin login</a></div>
-</div></div></div>
+
+<div class="row justify-content-center mt-4 mt-md-5">
+
+    <div class="col-md-6 col-lg-5">
+
+        <div class="card">
+
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Header -->
+
+                <div style="
+                    display: inline-block;
+                    background: var(--orange);
+                    color: var(--black);
+                    border: 2px solid var(--black);
+                    padding: 6px 9px;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: .5px;
+                    margin-bottom: 20px;
+                ">
+                    STUDENT PORTAL
+                </div>
+
+
+                <h1 style="
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: var(--black);
+                    letter-spacing: -1px;
+                    margin-bottom: 8px;
+                ">
+                    Student Login
+                </h1>
+
+
+                <p
+                    class="muted"
+                    style="
+                        font-size: 10px;
+                        line-height: 1.8;
+                        margin-bottom: 28px;
+                    "
+                >
+                    Use your existing student ID for now. NMIMS/Microsoft login can be added later.
+                </p>
+
+
+                <!-- Login form -->
+
+                <form method="POST">
+
+                    <label class="form-label">
+                        Student ID
+                    </label>
+
+                    <input
+                        class="form-control mb-4"
+                        name="user_id"
+                        placeholder="Enter student ID"
+                        required
+                    >
+
+
+                    <button
+                        class="btn btn-primary w-100"
+                        type="submit"
+                        style="padding: 12px;"
+                    >
+                        Continue →
+                    </button>
+
+                </form>
+
+
+                <!-- Admin -->
+
+                <div
+                    style="
+                        border-top: 2px solid var(--black);
+                        margin-top: 28px;
+                        padding-top: 18px;
+                        text-align: center;
+                    "
+                >
+
+                    <span
+                        class="muted"
+                        style="font-size: 9px;"
+                    >
+                        Managing events?
+                    </span>
+
+                    <a
+                        class="text-decoration-none"
+                        href="{{ url_for('admin_login') }}"
+                        style="
+                            color: var(--blue);
+                            font-size: 9px;
+                            font-weight: 700;
+                            margin-left: 5px;
+                        "
+                    >
+                        Admin login ↗
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Small footer -->
+
+        <div
+            class="text-center mt-4"
+            style="
+                color: var(--muted);
+                font-size: 8px;
+                letter-spacing: .3px;
+            "
+        >
+            STUDENT TASKBOARD · ACADEMIC + CAMPUS
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

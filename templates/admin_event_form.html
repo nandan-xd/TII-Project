@@ -1,10 +1,204 @@
 {% extends "base.html" %}
+
 {% block title %}Create Event{% endblock %}
-{% block content %}<div class="row justify-content-center"><div class="col-lg-8"><div class="page-header"><h1>Publish Event</h1><p>Students will see this on the Campus Events page.</p></div><div class="card p-4"><form method="POST">
-{% if admin.role=='super_admin' %}<div class="mb-3"><label class="form-label small fw-bold">Club / Category</label><select class="form-select" name="club_name" required>{% for club in clubs %}<option value="{{ club.name }}">{{ club.name }}</option>{% endfor %}</select></div>{% endif %}
-<div class="mb-3"><label class="form-label small fw-bold">Event title</label><input class="form-control" name="title" placeholder="e.g. Hackathon 2026" required></div>
-<div class="row"><div class="col-md-6 mb-3"><label class="form-label small fw-bold">Date</label><input type="date" class="form-control" name="event_date" required></div><div class="col-md-6 mb-3"><label class="form-label small fw-bold">Time</label><input type="time" class="form-control" name="event_time"></div></div>
-<div class="mb-3"><label class="form-label small fw-bold">Venue</label><input class="form-control" name="venue" placeholder="e.g. AB1 Auditorium"></div>
-<div class="mb-3"><label class="form-label small fw-bold">Description</label><textarea class="form-control" name="description" rows="4" placeholder="Event details"></textarea></div>
-<div class="mb-3"><label class="form-label small fw-bold">External registration form (optional)</label><input class="form-control" name="registration_url" placeholder="Paste Google Form link if you already have one"><div class="form-text">If provided, students can open the organizer's Google Form after registering on the portal.</div></div>
-<button class="btn btn-primary">Publish Event</button> <a class="btn btn-light" href="{{ url_for('admin_dashboard') }}">Cancel</a></form></div></div></div>{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="page-header">
+
+            <h1>Publish Event</h1>
+
+            <p>
+                Students will see this on the Campus Events page.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-body p-4 p-md-5">
+
+                <form method="POST">
+
+
+                    {% if admin.role=='super_admin' %}
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Club / Category
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="club_name"
+                            required
+                        >
+
+                            {% for club in clubs %}
+
+                            <option value="{{ club.name }}">
+                                {{ club.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Event title
+                        </label>
+
+                        <input
+                            class="form-control"
+                            name="title"
+                            placeholder="e.g. Hackathon 2026"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+                                Date
+                            </label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                name="event_date"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+                                Time
+                            </label>
+
+                            <input
+                                type="time"
+                                class="form-control"
+                                name="event_time"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Venue
+                        </label>
+
+                        <input
+                            class="form-control"
+                            name="venue"
+                            placeholder="e.g. AB1 Auditorium"
+                        >
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            name="description"
+                            rows="5"
+                            placeholder="Event details"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            External registration form (optional)
+                        </label>
+
+                        <input
+                            class="form-control"
+                            name="registration_url"
+                            placeholder="Paste Google Form link if you already have one"
+                        >
+
+                        <div
+                            style="
+                                color: var(--muted);
+                                font-size: 9px;
+                                line-height: 1.7;
+                                margin-top: 8px;
+                            "
+                        >
+                            If provided, students can open the organizer's Google Form after registering on the portal.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div
+                        style="
+                            border-top: 2px solid var(--black);
+                            padding-top: 18px;
+                            margin-top: 8px;
+                        "
+                    >
+
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                        >
+                            Publish Event
+                        </button>
+
+                        <a
+                            class="btn btn-outline-primary"
+                            href="{{ url_for('admin_dashboard') }}"
+                            style="margin-left: 5px;"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

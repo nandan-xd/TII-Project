@@ -1,21 +1,339 @@
 {% extends "base.html" %}
+
 {% block title %}Tasks | Student TaskBoard{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-end page-header"><div><h1>Your Tasks</h1><p>Academic work in one place.</p></div><form method="POST" action="{{ url_for('sync_teams') }}"><button class="btn btn-primary btn-sm">↻ Sync Teams</button></form></div>
-{% set urgent = tasks|selectattr('priority','in',['Very High','High','Date Missed'])|list %}
-{% if urgent|length %}<div class="alert alert-warning"><strong>Deadline alert:</strong> You have {{ urgent|length }} task(s) that need attention soon.</div>{% endif %}
-<div class="row g-3">
-{% if not tasks %}<div class="col-12"><div class="card p-5 text-center muted">No tasks yet. Add one or sync Teams.</div></div>{% endif %}
-{% for task in tasks %}
-<div class="col-12"><div class="card p-3"><div class="row align-items-center g-2">
-<div class="col-lg-5"><div class="fw-bold">{{ task.title }}</div><div class="small muted">{{ task.subject or 'Academic task' }} · {{ task.source }}</div></div>
-<div class="col-lg-3 small">Due <strong>{{ task.date }}</strong></div>
-<div class="col-lg-2"><span class="badge rounded-pill {% if task.priority in ['Very High','Date Missed'] %}text-bg-danger{% elif task.priority=='High' %}text-bg-warning{% elif task.priority=='Medium' %}badge-soft{% else %}text-bg-success{% endif %}">{{ task.priority }}</span></div>
-<div class="col-lg-2 text-lg-end">
-{% if task.status != 'Completed' %}<form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}" class="d-inline"><button class="btn btn-sm btn-outline-primary">Done</button></form>{% else %}<span class="badge text-bg-success">Completed</span>{% endif %}
-<a class="btn btn-sm btn-outline-danger" href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a></div>
-</div>{% if task.description %}<div class="small muted mt-2">{{ task.description }}</div>{% endif %}</div></div>
-{% endfor %}
+
+<div class="page-header">
+
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+
+        <div>
+            <h1>Your Tasks</h1>
+            <p>Academic work in one place.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('sync_teams') }}">
+
+            <button
+                class="btn btn-primary"
+                type="submit"
+            >
+                ↻ Sync Teams
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
-<div class="small muted mt-4">Teams Sync is currently running in demo mode. It is isolated so Microsoft Graph can replace it later without changing the dashboard.</div>
+
+
+{% set urgent = tasks|selectattr('priority','in',['Very High','High','Date Missed'])|list %}
+
+
+{% if urgent|length %}
+
+<div
+    class="alert mb-4"
+    style="
+        background: #f7e3d4;
+        border-color: var(--black);
+        padding: 14px 16px;
+    "
+>
+    <strong>Deadline alert:</strong>
+    You have {{ urgent|length }} task(s) that need attention soon.
+</div>
+
+{% endif %}
+
+
+<div class="row g-4">
+
+    {% if not tasks %}
+
+    <div class="col-12">
+
+        <div class="card">
+
+            <div class="card-body p-5 text-center">
+
+                <div
+                    style="
+                        display: inline-block;
+                        background: var(--blue);
+                        color: white;
+                        border: 2px solid var(--black);
+                        padding: 6px 9px;
+                        font-size: 9px;
+                        font-weight: 700;
+                        margin-bottom: 16px;
+                    "
+                >
+                    TASK BOARD
+                </div>
+
+                <div class="muted">
+                    No tasks yet. Add one or sync Teams.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% for task in tasks %}
+
+    <div class="col-12">
+
+        <div
+            class="card"
+            style="
+                box-shadow: 5px 5px 0 var(--black) !important;
+            "
+        >
+
+            <div class="card-body p-4">
+
+                <div class="row align-items-center g-3">
+
+
+                    <!-- TASK -->
+
+                    <div class="col-lg-5">
+
+                        <div
+                            style="
+                                font-size: 14px;
+                                font-weight: 700;
+                                color: var(--black);
+                                margin-bottom: 7px;
+                            "
+                        >
+                            {{ task.title }}
+                        </div>
+
+                        <div
+                            class="muted"
+                            style="
+                                font-size: 9px;
+                                text-transform: uppercase;
+                                letter-spacing: .3px;
+                            "
+                        >
+                            {{ task.subject or 'Academic task' }}
+                            ·
+                            {{ task.source }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="col-lg-3">
+
+                        <div
+                            class="muted"
+                            style="
+                                font-size: 9px;
+                                margin-bottom: 4px;
+                                text-transform: uppercase;
+                                letter-spacing: .5px;
+                            "
+                        >
+                            Due
+                        </div>
+
+                        <strong
+                            style="
+                                font-size: 11px;
+                                color: var(--black);
+                            "
+                        >
+                            {{ task.date }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- PRIORITY -->
+
+                    <div class="col-lg-2">
+
+                        {% if task.priority in ['Very High','Date Missed'] %}
+
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: #c94b3c;
+                                    color: white;
+                                    border: 2px solid var(--black);
+                                    padding: 5px 8px;
+                                    font-size: 9px;
+                                    font-weight: 700;
+                                "
+                            >
+                                {{ task.priority }}
+                            </span>
+
+                        {% elif task.priority == 'High' %}
+
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: var(--orange);
+                                    color: var(--black);
+                                    border: 2px solid var(--black);
+                                    padding: 5px 8px;
+                                    font-size: 9px;
+                                    font-weight: 700;
+                                "
+                            >
+                                {{ task.priority }}
+                            </span>
+
+                        {% elif task.priority == 'Medium' %}
+
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: var(--blue);
+                                    color: white;
+                                    border: 2px solid var(--black);
+                                    padding: 5px 8px;
+                                    font-size: 9px;
+                                    font-weight: 700;
+                                "
+                            >
+                                {{ task.priority }}
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: #dedbd2;
+                                    color: var(--black);
+                                    border: 2px solid var(--black);
+                                    padding: 5px 8px;
+                                    font-size: 9px;
+                                    font-weight: 700;
+                                "
+                            >
+                                {{ task.priority }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="col-lg-2 text-lg-end">
+
+                        {% if task.status != 'Completed' %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('complete_task', task_id=task.id) }}"
+                                class="d-inline"
+                            >
+
+                                <button
+                                    class="btn btn-sm btn-outline-primary"
+                                    type="submit"
+                                >
+                                    Done
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: var(--blue);
+                                    color: white;
+                                    border: 2px solid var(--black);
+                                    padding: 7px 9px;
+                                    font-size: 9px;
+                                    font-weight: 700;
+                                "
+                            >
+                                COMPLETED
+                            </span>
+
+                        {% endif %}
+
+
+                        <a
+                            class="btn btn-sm"
+                            href="{{ url_for('delete_task', task_id=task.id) }}"
+                            style="
+                                background: white;
+                                color: var(--black);
+                                border: 2px solid var(--black);
+                                margin-left: 4px;
+                            "
+                        >
+                            Delete
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                {% if task.description %}
+
+                <div
+                    style="
+                        border-top: 1px solid var(--light-line);
+                        margin-top: 18px;
+                        padding-top: 13px;
+                        color: var(--muted);
+                        font-size: 10px;
+                        line-height: 1.7;
+                    "
+                >
+                    {{ task.description }}
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+<div
+    class="mt-5"
+    style="
+        border-left: 4px solid var(--blue);
+        padding-left: 12px;
+        color: var(--muted);
+        font-size: 9px;
+        line-height: 1.7;
+    "
+>
+    Teams Sync is currently running in demo mode. It is isolated so Microsoft Graph can replace it later without changing the dashboard.
+</div>
+
 {% endblock %}

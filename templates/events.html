@@ -1,14 +1,202 @@
 {% extends "base.html" %}
+
 {% block title %}Events | Student TaskBoard{% endblock %}
+
 {% block content %}
-<div class="page-header"><h1>Campus Events</h1><p>Discover club activities, workshops and college-wide events.</p></div>
-<div class="row g-3">
-{% if not events %}<div class="col-12"><div class="card p-5 text-center muted">No events published yet.</div></div>{% endif %}
-{% for event in events %}<div class="col-md-6 col-xl-4"><div class="card p-4 h-100 d-flex flex-column">
-<div class="small muted mb-2">{{ event.club_name }}</div><h2 class="h5 fw-bold">{{ event.title }}</h2><p class="small muted flex-grow-1">{{ event.description or 'No description provided.' }}</p>
-<div class="small mb-1">📅 {{ event.event_date }}{% if event.event_time %} · {{ event.event_time }}{% endif %}</div><div class="small muted mb-3">📍 {{ event.venue or 'Venue TBA' }}</div>
-{% if event.id in registered_ids %}<button class="btn btn-sm btn-success" disabled>Registered</button>{% else %}<form method="POST" action="{{ url_for('register_event', event_id=event.id) }}"><button class="btn btn-primary btn-sm w-100">Register</button></form>{% endif %}
-{% if event.registration_url %}<a class="small text-center mt-2 text-decoration-none" href="{{ event.registration_url }}" target="_blank" rel="noopener">Open organizer form ↗</a>{% endif %}
-</div></div>{% endfor %}
+
+<div class="page-header">
+    <h1>Campus Events</h1>
+    <p>Discover club activities, workshops and college-wide events.</p>
 </div>
+
+
+<div class="row g-4">
+
+    {% if not events %}
+
+    <div class="col-12">
+
+        <div class="card p-5 text-center">
+
+            <div style="
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--blue);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 10px;
+            ">
+                Events
+            </div>
+
+            <div class="muted">
+                No events published yet.
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% for event in events %}
+
+    <div class="col-md-6 col-xl-4">
+
+        <div class="card h-100 d-flex flex-column">
+
+            <div class="card-body p-4">
+
+                <!-- Club -->
+
+                <div class="mb-3">
+
+                    <span style="
+                        display: inline-block;
+                        background: var(--blue);
+                        color: white;
+                        border: 2px solid var(--black);
+                        padding: 5px 8px;
+                        font-size: 9px;
+                        font-weight: 700;
+                    ">
+                        {{ event.club_name }}
+                    </span>
+
+                </div>
+
+
+                <!-- Event title -->
+
+                <h2 style="
+                    font-size: 17px;
+                    font-weight: 700;
+                    color: var(--black);
+                    line-height: 1.4;
+                    margin-bottom: 12px;
+                ">
+                    {{ event.title }}
+                </h2>
+
+
+                <!-- Description -->
+
+                <p
+                    class="muted"
+                    style="
+                        font-size: 10px;
+                        line-height: 1.8;
+                        margin-bottom: 22px;
+                    "
+                >
+                    {{ event.description or 'No description provided.' }}
+                </p>
+
+
+                <!-- Event details -->
+
+                <div
+                    style="
+                        border-top: 2px solid var(--black);
+                        padding-top: 14px;
+                        margin-top: auto;
+                    "
+                >
+
+                    <div
+                        style="
+                            font-size: 10px;
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                        "
+                    >
+                        📅 {{ event.event_date }}
+
+                        {% if event.event_time %}
+                            · {{ event.event_time }}
+                        {% endif %}
+
+                    </div>
+
+
+                    <div
+                        class="muted"
+                        style="
+                            font-size: 10px;
+                            margin-bottom: 18px;
+                        "
+                    >
+                        📍 {{ event.venue or 'Venue TBA' }}
+                    </div>
+
+
+                    <!-- Registration -->
+
+                    {% if event.id in registered_ids %}
+
+                        <button
+                            class="btn btn-sm w-100"
+                            disabled
+                            style="
+                                background: #dedbd2;
+                                border: 2px solid var(--black);
+                                color: #555;
+                            "
+                        >
+                            Registered
+                        </button>
+
+                    {% else %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('register_event', event_id=event.id) }}"
+                        >
+
+                            <button
+                                class="btn btn-primary btn-sm w-100"
+                                type="submit"
+                            >
+                                Register
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+
+                    <!-- External organizer form -->
+
+                    {% if event.registration_url %}
+
+                        <a
+                            class="d-block text-center mt-3"
+                            style="
+                                color: var(--blue);
+                                font-size: 9px;
+                                font-weight: 700;
+                                text-decoration: none;
+                            "
+                            href="{{ event.registration_url }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            Open organizer form ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
 {% endblock %}
