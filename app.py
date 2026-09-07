@@ -66,7 +66,7 @@ class Registration(db.Model):
 
 with app.app_context():
     db.create_all()
-    # Fixed starter clubs. A super admin can add more later.
+    
     starter_clubs = [
         ('Coding Club', 'Technology, coding and hackathon activities.'),
         ('Atrangi Club', 'Creative, cultural and artistic activities.'),
@@ -76,7 +76,6 @@ with app.app_context():
         if not Club.query.filter_by(name=name).first():
             db.session.add(Club(name=name, description=desc))
 
-    # Demo admin accounts. Change these before deployment.
     default_admins = [
         ('superadmin', 'super123', 'super_admin', None),
         ('codingadmin', 'coding123', 'club_admin', 'Coding Club'),
@@ -85,14 +84,8 @@ with app.app_context():
     ]
     for username, password, role, club_name in default_admins:
         if not Admin.query.filter_by(username=username).first():
-            db.session.add(Admin(
-                username=username,
-                password_hash=generate_password_hash(password),
-                role=role,
-                club_name=club_name
-            ))
+            db.session.add(Admin(username=username, password_hash=generate_password_hash(password), role=role, club_name=club_name))
     db.session.commit()
-
 
 def calculate_priority(date):
     IST = timezone(timedelta(hours=5, minutes=30))
@@ -108,7 +101,6 @@ def calculate_priority(date):
         return 'Medium'
     return 'Low'
 
-
 def login_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
@@ -117,7 +109,6 @@ def login_required(view):
         return view(*args, **kwargs)
     return wrapped
 
-
 def admin_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
@@ -125,7 +116,6 @@ def admin_required(view):
             return redirect(url_for('admin_login'))
         return view(*args, **kwargs)
     return wrapped
-
 
 def get_admin():
     return db.session.get(Admin, session.get('admin_id')) if session.get('admin_id') else None
@@ -137,39 +127,19 @@ def inject_notifications():
     if session.get('user_id'):
         user_id = session['user_id']
 
-        # Pending tasks due within the next 7 days
-        tasks = Tasks.query.filter_by(
-            user_id=user_id,
-            status='Pending'
-        ).order_by(Tasks.date.asc()).all()
+        tasks = Tasks.query.filter_by(user_id=user_id, status='Pending').order_by(Tasks.date.asc()).all()
 
         for task in tasks:
-            notifications.append({
-                'type': 'task',
-                'title': task.title,
-                'message': f'Due {task.date}',
-                'priority': task.priority
-            })
+            notifications.append({'type': 'task', 'title': task.title, 'message': f'Due {task.date}', 'priority': task.priority})
 
-        # Upcoming events
         today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
 
-        upcoming_events = Event.query.filter(
-            Event.event_date >= today.strftime('%Y-%m-%d')
-        ).order_by(Event.event_date.asc()).limit(5).all()
+        upcoming_events = Event.query.filter(Event.event_date >= today.strftime('%Y-%m-%d')).order_by(Event.event_date.asc()).limit(5).all()
 
         for event in upcoming_events:
-            notifications.append({
-                'type': 'event',
-                'title': event.title,
-                'message': f'{event.event_date} · {event.club_name}',
-                'priority': 'event'
-            })
+            notifications.append({'type': 'event', 'title': event.title, 'message': f'{event.event_date} · {event.club_name}', 'priority': 'event'})
 
-    return {
-        'notifications': notifications[:8],
-        'notification_count': len(notifications[:8])
-    }
+    return {'notifications': notifications[:8], 'notification_count': len(notifications[:8])}
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -202,11 +172,7 @@ def add_tasks():
         if not title or not date:
             flash('Task and due date are required.', 'warning')
             return render_template('add_task.html')
-        task = Tasks(
-            title=title, date=date, description=description,
-            priority=calculate_priority(date), user_id=session['user_id'],
-            source='Manual', subject=subject or None
-        )
+        task = Tasks(title=title, date=date, description=description, priority=calculate_priority(date), user_id=session['user_id'], source='Manual', subject=subject or None)
         db.session.add(task)
         db.session.commit()
         flash('Task added successfully.', 'success')
@@ -217,15 +183,12 @@ def add_tasks():
 @app.route('/your-tasks', methods=['GET', 'POST'])
 @login_required
 def your_tasks():
-    tasks = db.session.execute(
-        db.select(Tasks).filter_by(user_id=session['user_id']).order_by(Tasks.date.asc())
-    ).scalars().all()
+    tasks = db.session.execute(db.select(Tasks).filter_by(user_id=session['user_id']).order_by(Tasks.date.asc())).scalars().all()
     for task in tasks:
         if task.status != 'Completed':
             task.priority = calculate_priority(task.date)
     db.session.commit()
     return render_template('your_tasks.html', tasks=tasks)
-
 
 @app.route('/complete-task/<int:task_id>', methods=['POST'])
 @login_required
@@ -235,7 +198,6 @@ def complete_task(task_id):
         task.status = 'Completed'
         db.session.commit()
     return redirect(url_for('your_tasks'))
-
 
 @app.route('/delete-task', methods=['POST', 'GET'])
 @login_required
@@ -247,12 +209,9 @@ def delete_task():
         db.session.commit()
     return redirect(url_for('your_tasks'))
 
-
 @app.route('/sync-teams', methods=['POST'])
 @login_required
 def sync_teams():
-    # Demo importer until Microsoft Graph access is approved.
-    # This function is intentionally isolated so it can later be replaced by the real Graph API call.
     demo_assignments = [
         {
             'id': f'demo-{session["user_id"]}-oop-01',
@@ -284,14 +243,12 @@ def sync_teams():
     flash(f'Teams sync complete. {added} new assignment(s) imported.', 'success')
     return redirect(url_for('your_tasks'))
 
-
 @app.route('/events')
 @login_required
 def events():
     all_events = Event.query.order_by(Event.event_date.asc(), Event.event_time.asc()).all()
     registered_ids = {r.event_id for r in Registration.query.filter_by(user_id=session['user_id']).all()}
     return render_template('events.html', events=all_events, registered_ids=registered_ids)
-
 
 @app.route('/events/<int:event_id>/register', methods=['POST'])
 @login_required
@@ -309,7 +266,6 @@ def register_event(event_id):
         flash('You are already registered for this event.', 'info')
     return redirect(url_for('events'))
 
-
 @app.route('/my-events')
 @login_required
 def my_events():
@@ -317,7 +273,6 @@ def my_events():
     event_ids = [r.event_id for r in regs]
     my_events_list = Event.query.filter(Event.id.in_(event_ids)).order_by(Event.event_date.asc()).all() if event_ids else []
     return render_template('my_events.html', events=my_events_list)
-
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -331,12 +286,10 @@ def admin_login():
         flash('Invalid admin credentials.', 'danger')
     return render_template('admin_login.html')
 
-
 @app.route('/admin/logout')
 def admin_logout():
     session.pop('admin_id', None)
     return redirect(url_for('admin_login'))
-
 
 @app.route('/admin')
 @admin_required
@@ -349,7 +302,6 @@ def admin_dashboard():
         event_list = Event.query.filter_by(club_name=admin.club_name).order_by(Event.event_date.asc()).all()
         club_list = Club.query.filter_by(name=admin.club_name).all()
     return render_template('admin_dashboard.html', admin=admin, events=event_list, clubs=club_list)
-
 
 @app.route('/admin/events/new', methods=['GET', 'POST'])
 @admin_required
@@ -378,7 +330,6 @@ def admin_create_event():
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_event_form.html', admin=admin, clubs=Club.query.all(), event=None)
 
-
 @app.route('/admin/events/<int:event_id>/delete', methods=['POST'])
 @admin_required
 def admin_delete_event(event_id):
@@ -391,7 +342,6 @@ def admin_delete_event(event_id):
         flash('Event deleted.', 'success')
     return redirect(url_for('admin_dashboard'))
 
-
 @app.route('/admin/events/<int:event_id>/registrations')
 @admin_required
 def admin_registrations(event_id):
@@ -401,7 +351,6 @@ def admin_registrations(event_id):
         return redirect(url_for('admin_dashboard'))
     registrations = Registration.query.filter_by(event_id=event_id).order_by(Registration.registered_at.desc()).all()
     return render_template('admin_registrations.html', event=event, registrations=registrations, admin=admin)
-
 
 @app.route('/admin/clubs/new', methods=['GET', 'POST'])
 @admin_required
@@ -419,7 +368,6 @@ def admin_create_club():
             return redirect(url_for('admin_dashboard'))
         flash('Club name is empty or already exists.', 'warning')
     return render_template('admin_club_form.html')
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
