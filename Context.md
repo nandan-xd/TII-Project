@@ -1,19 +1,41 @@
-Student TaskBoard - Complete Project Context
+# Student TaskBoard
+## Master Project Context
 
-1. Project Identity
+> **Purpose:** This is the single source of context for continuing development of Student TaskBoard. It explains the problem, project evolution, current product, architecture, tech stack, completed work, pending work, design decisions, and implementation constraints.
 
-Project Name: Student TaskBoard
+---
 
-Student TaskBoard is a college-focused centralized student portal that brings together:
+# 1. Project Overview
 
-Academic tasks and assignments
+| Item | Details |
+|---|---|
+| **Project** | Student TaskBoard |
+| **Type** | College student portal / mini-project |
+| **Primary goal** | Centralize academic assignments and campus events |
+| **Backend** | Python + Flask |
+| **Database** | SQLite locally, PostgreSQL for deployment |
+| **ORM** | SQLAlchemy / Flask-SQLAlchemy |
+| **Frontend** | HTML + CSS + Bootstrap + Jinja2 |
+| **Font** | JetBrains Mono |
+| **Deployment direction** | Render + PostgreSQL |
+| **Major planned integration** | Microsoft Teams via Microsoft Graph |
+| **Current Teams state** | Demo importer; real Graph integration pending permissions |
+| **Current student auth** | Student ID + Flask session |
+| **Current admin auth** | Username/password + Flask session |
+| **Design direction** | Cream + matte orange + matte blue + black, hard shadows, square corners |
 
-College events and activities
+---
 
-The core problem is not that students cannot create a to-do list. The problem is that college information is scattered across multiple platforms.
+# 2. Core Idea
 
-Typical flow:
+Student TaskBoard is a **centralized college portal** that brings together:
 
+1. **Academic assignments/tasks**
+2. **College events and activities**
+
+The problem is not that students cannot create a to-do list. The problem is that college information is scattered across different platforms.
+
+```text
 Teacher
    ↓
 Microsoft Teams
@@ -31,330 +53,336 @@ Organizer
 Google Form
    ↓
 Event registration
+```
 
-The goal is to provide one student-facing place where students can see what they need to do and what is happening on campus.
+The goal is to give students one place to see what they need to do and what is happening on campus.
 
-2. Why the Project Exists
+---
 
-The original project was essentially a normal task-management application:
+# 3. Project Evolution
 
-manually add tasks
+## 3.1 Original Concept
 
-enter deadlines
+The original application was a basic student task manager:
 
-assign priority
+- manually add tasks
+- enter deadlines
+- set priority
+- view tasks
+- delete tasks
+- mark tasks complete
 
-view tasks
+## 3.2 Feedback That Changed the Project
 
-delete tasks
+During the project presentation, the key criticism was:
 
-mark tasks complete
+> If the student manually enters the deadline and priority, the student already knows that information and can manage it themselves.
 
-During the project presentation, the professor/ma'am pointed out an important weakness:
+This made the original project too similar to a generic to-do list.
 
-If a student has to manually enter the deadline and priority, the student already knows the information and can manage it themselves.
+## 3.3 Current Concept
 
-That led to the main conceptual change.
+The project changed into:
 
-Original concept
+> **A centralized student information dashboard that aggregates academic assignments and campus events.**
 
-A better to-do list for students.
+The important shift is:
 
-Current concept
+```text
+OLD
+Student knows assignment
+        ↓
+Student manually enters assignment
+        ↓
+TaskBoard stores it
 
-A centralized student information dashboard that aggregates academic assignments and campus events.
-
-This shift is very important to the project's identity.
-
-3. Problem Statement
-
-Students receive college-related information through multiple platforms.
-
-Academic information
-
-Usually comes through:
-
+NEW
+Teacher creates assignment
+        ↓
 Microsoft Teams
+        ↓
+TaskBoard imports assignment
+        ↓
+Student sees it automatically
+```
 
-class groups
+For events:
 
-messages
+```text
+Club publishes event
+        ↓
+Student TaskBoard
+        ↓
+Student discovers event
+        ↓
+Student registers
+```
 
-teacher announcements
+---
 
-other academic channels
+# 4. Problem Definition
 
-Event information
+## 4.1 Academic Information
 
-Usually comes through:
+Students may receive academic information through:
 
-WhatsApp
+- Microsoft Teams
+- class groups
+- messages
+- teacher announcements
+- other academic channels
 
-club groups
+## 4.2 Event Information
 
-Instagram
+Students may receive event information through:
 
-college announcements
+- WhatsApp
+- club groups
+- Instagram
+- college announcements
+- Google Forms
+- messages
 
-Google Forms
+## 4.3 Problems Created
 
-messages
+### P1. Information is scattered
 
-This creates several problems:
+Students must check multiple platforms.
 
-Problem 1: Information is scattered
+### P2. Information gets buried
 
-Students have to check multiple platforms.
+Important announcements can disappear inside older messages.
 
-Problem 2: Information gets buried
+### P3. Deadlines and registrations can be forgotten
 
-Important assignments or event announcements can disappear into old messages.
+A student may know about something but still fail to act on it.
 
-Problem 3: Deadlines/events can be forgotten
+### P4. Event registration is fragmented
 
-A student may know about something but still forget to act on it.
+The announcement and registration form may exist in different places.
 
-Problem 4: Event registration is fragmented
+### P5. No unified student view
 
-A club may announce an event in one place and use a separate Google Form for registration.
+Academic tasks and campus events are separated.
 
-Problem 5: There is no unified student view
+### Final problem framing
 
-Academic tasks and campus activities exist separately.
-
-The defensible problem statement is:
-
-College information is distributed across multiple platforms, increasing the effort required to find, remember and act on it.
+> **College information is distributed across multiple platforms, increasing the effort required to find, remember and act on it.**
 
 Do not claim that every student constantly misses deadlines.
 
-4. Survey Findings
+---
 
-A survey was conducted to validate the problem.
+# 5. User Research
 
-Some responses included:
+## 5.1 Survey Purpose
 
-"By searching in WhatsApp"
+The survey was used to understand:
 
-"Go through the older messages."
+- where students receive academic information
+- how students track college events
+- whether information gets lost/buried
+- whether students have missed or nearly missed assignments/events
+- how many platforms students use
 
-"I almost forgot I had to submit my DM tutorial."
+## 5.2 Important Responses
 
-"during MTT i missed an assignment and an event"
+Examples included:
 
-"check older messages, WhatsApp, friends"
+> “By searching in WhatsApp”
 
-The survey indicated that students commonly rely on:
+> “Go through the older messages.”
 
-WhatsApp
+> “I almost forgot I had to submit my DM tutorial.”
 
-Microsoft Teams
+> “during MTT i missed an assignment and an event”
 
-messages
+> “check older messages, WhatsApp, friends”
 
-calendars
+## 5.3 Key Observation
 
-friends
+**70% of respondents reported often needing to search older messages for college-related information.**
 
-other channels
+The survey was not unanimous:
 
-for college-related information.
+- some students reported never missing deadlines
+- others reported missing or almost missing assignments/events
 
-A useful observation from the survey was that 70% of respondents reported often needing to search older messages for college-related information.
+Therefore the project should focus on **information fragmentation and retrieval effort**, not claim universal deadline problems.
 
-The responses were not uniform. Some students reported never missing deadlines, while others reported missing or almost missing assignments/events.
+---
 
-Therefore, the project should frame the issue as information fragmentation and retrieval effort, rather than claiming universal deadline failure.
+# 6. Design Thinking / Empathy Phase
 
-5. Empathy / Design Thinking Work
+## 6.1 Recurring Observations
 
-The project went through the Empathy phase.
+1. Students rely heavily on WhatsApp, Microsoft Teams and messages.
+2. Students often search older messages for information.
+3. Some students miss or almost miss assignments, deadlines or event registrations.
+4. Students use multiple platforms/methods to track information.
+5. Students show interest in having academic tasks and college events in one place.
 
-Recurring observations
+## 6.2 Student Pains
 
-Students rely heavily on WhatsApp, Microsoft Teams and messages.
+- scattered information
+- buried announcements
+- forgotten assignments
+- forgotten registrations
+- repeated searching
+- too many platforms to check
 
-Students often search older messages for information.
+## 6.3 Desired Gains
 
-Some students miss or almost miss assignments, deadlines or event registrations.
+- one place to check
+- easier assignment/deadline access
+- less searching
+- easier event discovery
+- convenient registration
 
-Students use multiple platforms/methods to track information.
+## 6.4 Define-Phase Insight
 
-Students show interest in having academic tasks and college events in one place.
+> **A centralized platform that brings academic assignments and college events together.**
 
-Student pains
+---
 
-scattered information
+# 7. Product Scope
 
-buried announcements
+## 7.1 Student Features
 
-forgotten assignments
+### Authentication
 
-forgotten registrations
+- Student ID login
+- Flask session
 
-repeated searching
+### Academic Tasks
 
-too many places to check
+- View tasks
+- Manually add tasks
+- Automatic priority calculation
+- Mark tasks completed
+- Delete tasks
+- Show task source
+- Show subject
+- Sync/import Teams assignments
 
-Desired gains
+### Campus Events
 
-one place to check
+- Browse events
+- View club/category
+- View date/time/venue
+- Register for events
+- Open external organizer form
+- View registered events
 
-easier assignment/deadline access
+### Notifications
 
-less searching
+- Task notifications
+- Upcoming event notifications
+- Dynamic notification count
 
-easier event discovery
+---
 
-convenient event registration
+# 8. Admin Features
 
-Define-phase insight
+There are two admin levels.
 
-A centralized platform that brings academic assignments and college events together.
+## 8.1 Club Admin
 
-6. What the Application Does
+A Club Admin can:
 
-The application has two major sides.
+- log in
+- create events for their club
+- view their club's events
+- delete their club's events
+- view registrations for their events
 
-A. Student side
+A Club Admin should **not** manage other clubs.
 
-Students can:
+## 8.2 Super Admin
 
-log in
+A Super Admin can:
 
-view academic tasks
+- view all clubs
+- view all events
+- create events
+- delete events
+- view registrations
+- create new clubs
 
-manually add tasks
+---
 
-sync/import Teams assignments
+# 9. Initial Clubs
 
-mark tasks complete
+| Club | Purpose |
+|---|---|
+| **Coding Club** | Technology, coding and hackathon activities |
+| **Atrangi Club** | Creative, cultural and artistic activities |
+| **College Events** | College-wide events, workshops and competitions |
 
-delete tasks
+The Super Admin can create additional clubs later.
 
-see automatically calculated task priority
+---
 
-browse college events
+# 10. Event System
 
-discover events
+## 10.1 Event Creation Flow
 
-register for events
-
-view their registered events
-
-receive dashboard notifications
-
-B. Admin side
-
-Admins manage events.
-
-There are two levels.
-
+```text
 Club Admin
-
-Each club gets its own admin.
-
-Example:
-
-Coding Club Admin
-        ↓
-Can manage Coding Club events
-
-Atrangi Club Admin
-        ↓
-Can manage Atrangi Club events
-
-College Events Admin
-        ↓
-Can manage College Events
-
-A club admin should not be able to manage another club's events.
-
-Super Admin
-
-Super Admin can:
-
-view all clubs
-
-view all events
-
-create events
-
-delete events
-
-view registrations
-
-create new clubs
-
-7. Clubs Currently Supported
-
-The initial seeded clubs are:
-
-Coding Club
-
-Technology, coding and hackathon activities.
-
-Atrangi Club
-
-Creative, cultural and artistic activities.
-
-College Events
-
-College-wide events, workshops and competitions.
-
-The Super Admin can later create additional clubs.
-
-8. Event Workflow
-
-Club Admin
-     ↓
+    ↓
 Admin Dashboard
-     ↓
+    ↓
 Create Event
-     ↓
+    ↓
 Enter:
-    • Event name
+    • Event title
     • Date
     • Time
     • Venue
     • Description
-    • Registration form
-     ↓
+    • External registration URL
+    ↓
 Publish
-     ↓
+    ↓
 Student sees event
-     ↓
+    ↓
 Student registers
-     ↓
-Event appears in "My Events"
+    ↓
+Event appears in My Events
+```
 
-9. Google Forms Integration
+## 10.2 Event Registration
 
-A club may already have a Google Form for registration.
+The system stores:
 
-The project does not need to rebuild the entire registration system.
+```text
+event_id
+user_id
+registered_at
+```
 
-Instead, the admin can provide an external registration URL.
+A unique constraint prevents the same student from registering twice for the same event.
 
-Example:
+## 10.3 External Google Forms
 
-Event:
-Hackathon 2026
+The portal does not need to replace existing Google Forms.
 
-Student TaskBoard:
-[Register]
+Admins can paste an external registration URL.
 
-External organizer form:
-[Open organizer form ↗]
+The student can:
 
-The portal handles event discovery and stores its own registration record, while the club can continue using its existing Google Form.
+1. register through TaskBoard
+2. optionally open the organizer's external form
 
-10. Microsoft Teams Integration
+This keeps the project practical and avoids unnecessary complexity.
 
-This is the major planned integration.
+---
 
-Desired final architecture:
+# 11. Microsoft Teams Integration
 
+## 11.1 Intended Final Architecture
+
+```text
 Student TaskBoard
         ↓
 Microsoft Login
@@ -370,124 +398,138 @@ Flask Backend
 PostgreSQL
         ↓
 Student Dashboard
+```
 
-The relevant Microsoft Graph Education endpoint discussed is:
+Relevant Graph endpoint discussed:
 
+```text
 GET /v1.0/education/me/assignments
+```
 
-The relevant delegated permission discussed is:
+Relevant delegated permission discussed:
 
+```text
 EduAssignments.ReadBasic
+```
 
-The intended workflow is:
+## 11.2 Intended User Experience
 
+```text
 Teacher creates assignment
         ↓
-Teams
+Microsoft Teams
         ↓
-Student TaskBoard sync
+TaskBoard sync
         ↓
-Assignment appears automatically
+Assignment automatically appears
+        ↓
+Student sees it in Tasks
+```
 
-This is what makes the academic side more meaningful than a normal manual to-do list.
+The student should not have to recreate every Teams assignment manually.
 
-11. Current Teams Situation
+---
 
-The real Microsoft Teams integration is not fully connected yet.
+# 12. Current Microsoft / NMIMS Constraint
 
-Microsoft Entra/Azure access issues were encountered with the NMIMS account, including tenant/application registration restrictions.
+The real Microsoft Teams integration is **not currently connected**.
 
-The project cannot legitimately bypass those tenant restrictions.
+Microsoft Entra/Azure access issues were encountered with the NMIMS account, including application-registration/tenant restrictions.
 
-If the college tenant does not allow students to register applications or obtain the required Graph permissions, the real integration requires one of:
+Important constraint:
 
-College IT registers/approves the application.
+> **The project must not attempt to bypass college tenant restrictions.**
 
-An administrator grants the required permissions.
+If required permissions are unavailable, legitimate options are:
 
-Development happens using a separate Microsoft 365 Education test tenant.
+1. NMIMS IT registers/approves the application.
+2. An administrator grants the required permissions.
+3. Development uses a separate Microsoft 365 Education test tenant.
 
-12. Current Teams Solution: Demo Importer
+---
 
-For now, the project contains a demo Teams importer.
+# 13. Current Teams Demo Importer
 
-It is intentionally isolated so Microsoft Graph can replace it later.
+Until Graph access is available, the project uses a demo importer.
 
 Current route:
 
+```text
 POST /sync-teams
+```
 
-It creates demo assignments such as:
+It creates sample assignments such as:
 
+```text
 OOP Assignment 3
-Subject:
-Object Oriented Programming
+Subject: Object Oriented Programming
+```
 
 and:
 
+```text
 CN Lab Report
-Subject:
-Computer Networks
+Subject: Computer Networks
+```
 
-These are stored as normal Tasks with:
+Imported tasks use:
 
+```text
 source = "Teams"
+external_id = unique external identifier
+```
 
-and an:
+The dashboard therefore does not care whether a task came from manual entry or Microsoft Graph.
 
-external_id
+The demo importer can later be replaced with Graph API without redesigning the student dashboard.
 
-The database is therefore already prepared for externally imported assignments.
+---
 
-13. Why the Demo Importer Is Useful
+# 14. Duplicate Teams Assignments
 
-The prototype can demonstrate:
+The `external_id` field is intended to prevent duplicates.
 
-Student
- ↓
-Sync Teams
- ↓
-Assignments imported
- ↓
-Tasks appear automatically
- ↓
-Dashboard displays them
+```text
+First sync
+    ↓
+Assignment ID 12345 not found
+    ↓
+Create task
 
-Later, the implementation can change from:
+Second sync
+    ↓
+Assignment ID 12345 already exists
+    ↓
+Do not create duplicate
+```
 
-demo_assignments = [...]
+---
 
-to:
+# 15. Authentication
 
-Microsoft Graph API
+## 15.1 Current Student Login
 
-without redesigning the dashboard.
-
-The importer was deliberately isolated for this reason.
-
-14. Student Login
-
-Current student authentication is intentionally simple.
-
-Students enter their student ID:
-
+```text
 Student ID
-[ 23XXXXX ]
+    ↓
+Flask session
+    ↓
+Student dashboard
+```
 
-[ Continue → ]
+No student password is currently required.
 
-No password system is currently required for students.
+Session key:
 
-The session stores:
-
+```python
 session['user_id']
+```
 
-This is suitable for the current prototype.
+## 15.2 Future Student Login
 
-15. Future Student Authentication
+Potential final architecture:
 
-The planned future flow is:
-
+```text
 NMIMS Microsoft Account
         ↓
 Microsoft OAuth
@@ -496,75 +538,78 @@ Student authenticated
         ↓
 Microsoft Graph
         ↓
-Assignments retrieved
+Assignments
+```
 
-This would allow Microsoft authentication to serve both authentication and authorization for Teams data.
+This could provide both identity and Graph authorization.
 
-16. Admin Authentication
+---
 
-Admins have a separate login:
+# 16. Admin Authentication
 
+Admin login route:
+
+```text
 /admin/login
+```
 
-Admin accounts are stored in the database.
+Admin fields:
 
-Admin fields include:
-
+```text
 username
 password_hash
 role
 club_name
+```
 
 Roles:
 
+```text
 super_admin
 club_admin
+```
 
-Club admins have a club_name.
+Development accounts currently include:
 
-17. Development Admin Accounts
-
-The development database currently seeds:
-
+```text
 superadmin
 codingadmin
 atrangiadmin
 collegeadmin
-
-with development passwords.
+```
 
 These are prototype credentials and should be changed before real deployment.
 
-Passwords are hashed using:
+Passwords use:
 
+```python
 generate_password_hash()
-
-and checked using:
-
 check_password_hash()
+```
 
-18. Database Models
+---
 
-The application uses SQLAlchemy.
+# 17. Database Architecture
 
-There are five main models:
+The application uses **SQLAlchemy / Flask-SQLAlchemy**.
 
+Main models:
+
+```text
 Tasks
-
 Admin
-
 Club
-
 Event
-
 Registration
+```
 
-19. Tasks Model
+## 17.1 Tasks
 
-Stores academic tasks.
+Purpose: academic tasks and imported assignments.
 
 Fields:
 
+```text
 id
 title
 date
@@ -575,81 +620,41 @@ source
 external_id
 subject
 status
+```
 
-Important fields
+Values:
 
-source
+```text
+source:
+    Manual
+    Teams
 
-Distinguishes:
+status:
+    Pending
+    Completed
+```
 
-Manual
-Teams
+## 17.2 Admin
 
-external_id
-
-Identifies an externally imported assignment.
-
-subject
-
-Stores the academic subject.
-
-status
-
-Currently:
-
-Pending
-Completed
-
-20. Automatic Task Priority
-
-Priority is calculated automatically from the due date.
-
-Current rules:
-
-Past due       → Date Missed
-Today          → Very High
-≤ 3 days       → High
-≤ 7 days       → Medium
-> 7 days       → Low
-
-The student does not manually enter priority.
-
-This is important because the original project criticism was partly about students manually setting information the system could determine itself.
-
-21. Admin Model
-
-Stores admin accounts.
-
-Fields:
-
+```text
 id
 username
 password_hash
 role
 club_name
+```
 
-22. Club Model
+## 17.3 Club
 
-Stores clubs.
-
-Fields:
-
+```text
 id
 name
 description
+```
 
-Initial examples:
+## 17.4 Event
 
-Coding Club
-Atrangi Club
-College Events
-
-23. Event Model
-
-Stores campus events.
-
-Fields:
-
+```text
 id
 title
 description
@@ -659,425 +664,113 @@ venue
 club_name
 registration_url
 created_by
+```
 
-24. Registration Model
+## 17.5 Registration
 
-Stores which student registered for which event.
-
-Fields:
-
+```text
 id
 event_id
 user_id
 registered_at
+```
 
-There is a unique constraint on:
+Unique constraint:
 
+```text
 event_id + user_id
+```
 
-Therefore a student cannot register for the same event twice.
+---
 
-25. Technology Stack
+# 18. Automatic Task Priority
 
-Backend
+Priority is calculated from the due date:
 
-Python + Flask
+```text
+Past due       → Date Missed
+Today          → Very High
+≤ 3 days       → High
+≤ 7 days       → Medium
+> 7 days       → Low
+```
 
-Database
+The student does not manually set priority.
 
-Development:
+---
 
+# 19. Technology Stack
+
+## Backend
+
+```text
+Python
+Flask
+```
+
+## Database
+
+Local:
+
+```text
 SQLite
+```
 
-Production:
+Deployment:
 
+```text
 PostgreSQL
+```
 
-ORM:
+## ORM
 
-SQLAlchemy / Flask-SQLAlchemy
+```text
+SQLAlchemy
+Flask-SQLAlchemy
+```
 
-Frontend
+## Frontend
 
+```text
 HTML
 CSS
 Bootstrap
 Jinja2
+```
 
-Custom CSS is layered over Bootstrap.
+## Typography
 
-Font
-
+```text
 JetBrains Mono
+```
 
-Security
+## Security
 
-Admin password hashing:
-
-Werkzeug
-
-Session authentication:
-
+```text
 Flask sessions
+Werkzeug password hashing
+```
 
-Deployment
+## Deployment
 
-The project has been designed around:
-
+```text
 Render
-+
 PostgreSQL
+Environment variables
+```
 
-with environment variables.
+## External Integration
 
-External Integration
-
-Planned:
-
+```text
 Microsoft Graph API
+Microsoft Entra / OAuth
+```
 
-for Teams Education assignments.
+---
 
-Potential future authentication:
+# 20. Project Structure
 
-Microsoft Entra ID / Microsoft OAuth
-
-26. Current Visual Design
-
-The UI has been redesigned into a strong, consistent visual identity.
-
-Colors
-
-Cream / off-white
-        +
-Matte orange
-        +
-Matte blue
-        +
-Black
-
-Style
-
-square corners
-
-thick black borders
-
-hard offset shadows
-
-solid cards
-
-no gradients
-
-minimal decoration
-
-JetBrains Mono
-
-strong typography
-
-practical dashboard appearance
-
-The design goal is:
-
-Human-designed college portal, not an AI dashboard.
-
-The project should look practical and intentional rather than like a generic AI SaaS template.
-
-27. Student Pages
-
-Login
-
-/login
-
-Student ID login.
-
-Tasks
-
-/your-tasks
-
-Shows:
-
-task title
-
-subject
-
-source
-
-due date
-
-priority
-
-status
-
-Done
-
-Delete
-
-Also contains:
-
-↻ Sync Teams
-
-Add Task
-
-/add-task
-
-Allows:
-
-task
-
-subject
-
-due date
-
-description
-
-Priority is calculated automatically.
-
-Events
-
-/events
-
-Displays campus events.
-
-Each event can show:
-
-club
-
-title
-
-description
-
-date
-
-time
-
-venue
-
-registration
-
-organizer form
-
-My Events
-
-/my-events
-
-Shows events the student has registered for.
-
-28. Admin Pages
-
-Admin Login
-
-/admin/login
-
-Admin Dashboard
-
-/admin
-
-Shows:
-
-published event count
-
-admin scope
-
-events
-
-registration links
-
-delete controls
-
-create event
-
-Super Admin's create club button
-
-Create Event
-
-/admin/events/new
-
-Registrations
-
-/admin/events/<event_id>/registrations
-
-Shows students registered for an event.
-
-Create Club
-
-/admin/clubs/new
-
-Super Admin only.
-
-29. Navbar
-
-The navbar provides access to the main student areas.
-
-Conceptually:
-
-STUDENT TASKBOARD
-
-Tasks
-Events
-My Events
-🔔
-Logout
-
-The notification bell is part of the shared base.html.
-
-30. Notification System
-
-This is one of the parts currently being improved.
-
-Originally, the notification bell in base.html was hard-coded.
-
-It contained fixed items such as:
-
-OOP Assignment
-Coding Club Event
-New College Event
-
-This caused a bug.
-
-For example:
-
-Task exists
-   ↓
-Notification appears
-
-Task deleted
-   ↓
-Notification should disappear
-
-But because the notification was hard-coded, it could remain visible after the task was deleted or completed.
-
-31. Correct Notification Architecture
-
-The intended fix is to make notifications database-driven using a Flask context processor.
-
-Conceptually:
-
-Database
-   ↓
-Pending tasks
-   +
-Upcoming events
-   ↓
-Notification generator
-   ↓
-base.html
-   ↓
-Bell
-
-Therefore:
-
-Pending task
-
-Can appear in notifications.
-
-Completed task
-
-Should disappear from task notifications.
-
-Deleted task
-
-Should disappear.
-
-Upcoming event
-
-Can appear.
-
-This is much cleaner than hard-coded notification content.
-
-32. Current Notification Idea
-
-Notifications can include:
-
-Tasks
-
-Based on:
-
-Pending
-
-and ordered by due date.
-
-Events
-
-Upcoming campus events can appear.
-
-The bell count should be generated from the actual notification list.
-
-33. Important Backend Routes
-
-Current routes include:
-
-/
- /login
-
-/logout
-
-/add-task
-
-/your-tasks
-
-/complete-task/<task_id>
-
-/delete-task
-
-/sync-teams
-
-/events
-
-/events/<event_id>/register
-
-/my-events
-
-/admin/login
-
-/admin/logout
-
-/admin
-
-/admin/events/new
-
-/admin/events/<event_id>/delete
-
-/admin/events/<event_id>/registrations
-
-/admin/clubs/new
-
-34. Backend Architecture
-
-The backend is currently a single Flask application:
-
-app.py
-
-Conceptually:
-
-Flask app
-    │
-    ├── Database configuration
-    │
-    ├── Models
-    │     ├── Tasks
-    │     ├── Admin
-    │     ├── Club
-    │     ├── Event
-    │     └── Registration
-    │
-    ├── Authentication
-    │
-    ├── Student routes
-    │
-    ├── Task management
-    │
-    ├── Teams importer
-    │
-    ├── Event management
-    │
-    └── Admin management
-
-For a college mini-project, keeping this relatively simple is intentional.
-
-35. Project Structure
-
-Approximate structure:
-
+```text
 Student-Task-Board/
 │
 ├── app.py
@@ -1103,228 +796,361 @@ Student-Task-Board/
 ├── .env.example
 ├── requirements.txt
 └── README.md
+```
 
-The exact static files may vary depending on the current repository state.
+---
 
-36. Environment Variables
+# 21. Environment Variables
 
-The project uses environment variables for secrets/configuration.
+`.env.example`:
 
-.env.example:
-
+```env
 DATABASE_URL=
 SECRET_KEY=
 MICROSOFT_CLIENT_ID=
 MICROSOFT_CLIENT_SECRET=
+```
 
-The real .env must not be committed to GitHub.
+Real secrets must stay in `.env` or deployment environment variables.
 
-37. Gitignore
+Do not commit the real `.env` to GitHub.
 
-The project already ignores common development files such as:
+---
 
-__pycache__
-venv
-.env
-instance
-*.db
-*.sqlite
-.vscode
-.idea
-.pytest_cache
-build
-dist
+# 22. Application Routes
 
-This prevents local databases, secrets and development junk from being pushed.
+## Student
 
-38. What Is Already Done
+```text
+/
+/login
+/logout
+/add-task
+/your-tasks
+/complete-task/<task_id>
+/delete-task
+/sync-teams
+/events
+/events/<event_id>/register
+/my-events
+```
 
-Core application
+## Admin
 
-Flask application
+```text
+/admin/login
+/admin/logout
+/admin
+/admin/events/new
+/admin/events/<event_id>/delete
+/admin/events/<event_id>/registrations
+/admin/clubs/new
+```
 
-Database setup
+---
 
-SQLAlchemy models
+# 23. Current UI Pages
 
-Student login
+## Student
 
-Student sessions
+### Login
 
-Manual task creation
+`/login`
 
-Automatic priority calculation
+Student ID login.
 
-Task completion
+### Tasks
 
-Task deletion
+`/your-tasks`
 
-Teams preparation
+Shows:
 
-Teams sync route
+- task title
+- subject
+- source
+- due date
+- priority
+- status
+- Done
+- Delete
+- Sync Teams
 
-Teams assignment fields in database
+### Add Task
 
-source field
+`/add-task`
 
-external_id
+Fields:
 
-subject support
+- task
+- subject
+- due date
+- description
 
-isolated demo importer
+### Events
 
-Real Microsoft Graph integration
+`/events`
 
-Events
+Shows:
 
-Event model
+- club
+- title
+- description
+- date
+- time
+- venue
+- registration
+- external organizer form
 
-Club model
+### My Events
 
-Registration model
+`/my-events`
 
-Student events page
+Shows registered events.
 
-My Events page
+## Admin
 
-Event registration
+### Admin Login
 
-External Google Form URL
+`/admin/login`
 
-Admin
+### Admin Dashboard
 
-Admin authentication
+`/admin`
 
-Password hashing
+Shows:
 
-Super Admin
+- published event count
+- scope
+- event list
+- registration links
+- delete controls
+- New Event
+- New Club for Super Admin
 
-Club Admin
+### Create Event
 
-Club-level event restriction
+`/admin/events/new`
 
-Event creation
+### Registrations
 
-Event deletion
+`/admin/events/<event_id>/registrations`
 
-Registration viewing
+### Create Club
 
-Club creation
+`/admin/clubs/new`
 
-UI
+Super Admin only.
 
-Base theme
+---
 
-Student login redesign
+# 24. UI / Design System
 
-Task page redesign
+The project intentionally uses a distinctive non-AI-looking visual style.
 
-Add task redesign
+## Design goals
 
-Events redesign
+- practical
+- clean
+- human-designed
+- college-oriented
+- minimal
+- bold but not flashy
 
-My Events redesign
+## Visual system
 
-Admin login redesign
+```text
+Cream background
+        +
+Matte orange
+        +
+Matte blue
+        +
+Black
+```
 
-Admin event form redesign
+## Design characteristics
 
-Admin dashboard redesign
+- JetBrains Mono
+- square corners
+- thick black borders
+- hard offset shadows
+- solid cards
+- no gradients
+- strong typography
+- minimal decoration
 
-Create club redesign
+---
 
-Design system
+# 25. Notification System
 
-JetBrains Mono
+## Current problem
 
-matte orange
+The notification bell in `base.html` was originally hard-coded.
 
-matte blue
+Example fixed items:
 
-cream background
+```text
+OOP Assignment
+Coding Club Event
+New College Event
+```
 
-black borders
+Therefore:
 
-solid cards
-
-hard shadows
-
-square corners
-
-39. What Still Needs To Be Done
-
-The project is not completely finished, but the core application is in place.
-
-Priority 1: Finish UI
-
-Potential remaining page to redesign/review:
-
-admin_registrations.html
-
-Also check any remaining pages for consistency with the new visual system.
-
-Priority 2: Fix dynamic notifications
-
-Replace the hard-coded notification bell with database-driven notifications.
-
-This is currently an important functional improvement.
-
-Priority 3: Test workflows
-
-Student workflow
-
-Login
- ↓
-Add task
- ↓
-Task appears
- ↓
-Mark complete
- ↓
-Notification disappears
- ↓
+```text
 Delete task
- ↓
+    ↓
 Task disappears
-
-Event workflow
-
-Admin creates event
- ↓
-Student sees event
- ↓
-Student registers
- ↓
-My Events updates
- ↓
-Admin sees registration
-
-Permission workflow
-
-Coding Admin
     ↓
-Coding events only
+Hard-coded notification may remain
+```
 
-and:
+## Intended solution
 
-Super Admin
-    ↓
-All events
-    +
-All clubs
+Generate notifications from the database using a Flask context processor.
 
-Priority 4: Teams integration
+```text
+Database
+   ↓
+Pending Tasks
++
+Upcoming Events
+   ↓
+Notification generator
+   ↓
+base.html
+   ↓
+Bell + count
+```
 
-Eventually replace:
+Expected behaviour:
 
-demo_assignments = [...]
+```text
+Pending task
+    → notification appears
 
-with Microsoft Graph.
+Completed task
+    → task notification disappears
 
-40. Final Teams Implementation
+Deleted task
+    → task notification disappears
 
-Expected eventual flow:
+Upcoming event
+    → event notification appears
+```
 
+This is an active functional task.
+
+---
+
+# 26. Completed Work
+
+## Core application
+
+- [x] Flask application
+- [x] Database setup
+- [x] SQLAlchemy models
+- [x] Student login
+- [x] Student sessions
+- [x] Manual task creation
+- [x] Automatic priority calculation
+- [x] Task completion
+- [x] Task deletion
+
+## Teams preparation
+
+- [x] Teams sync route
+- [x] Teams assignment fields
+- [x] `source`
+- [x] `external_id`
+- [x] subject support
+- [x] isolated demo importer
+- [ ] real Microsoft Graph integration
+
+## Events
+
+- [x] Event model
+- [x] Club model
+- [x] Registration model
+- [x] Student events page
+- [x] My Events page
+- [x] Event registration
+- [x] External Google Form URL
+
+## Admin
+
+- [x] Admin authentication
+- [x] Password hashing
+- [x] Super Admin
+- [x] Club Admin
+- [x] Club-level event restriction
+- [x] Event creation
+- [x] Event deletion
+- [x] Registration viewing
+- [x] Club creation
+
+## UI redesign
+
+- [x] Base theme
+- [x] Student login
+- [x] Tasks page
+- [x] Add Task page
+- [x] Events page
+- [x] My Events page
+- [x] Admin login
+- [x] Admin event form
+- [x] Admin dashboard
+- [x] Create club page
+
+---
+
+# 27. Remaining Work
+
+## P0 - Functional
+
+### 1. Dynamic notifications
+
+Replace hard-coded notifications with database-driven notifications.
+
+### 2. Full testing
+
+Test:
+
+```text
+Student login
+Task creation
+Task completion
+Task deletion
+Teams demo sync
+Event creation
+Event registration
+My Events
+Admin registration view
+Admin permissions
+Super Admin permissions
+```
+
+## P1 - UI
+
+### 3. Finish remaining UI review
+
+Primary remaining page:
+
+```text
+admin_registrations.html
+```
+
+Also check every page against the same design system.
+
+## P2 - Integration
+
+### 4. Real Microsoft Graph integration
+
+Only after required Microsoft/NMIMS permissions are available.
+
+Expected flow:
+
+```text
 Microsoft OAuth
        ↓
 Access token
@@ -1333,244 +1159,37 @@ Graph API
        ↓
 /education/me/assignments
        ↓
-Parse assignment
+Parse assignments
        ↓
 Check external_id
        ↓
 Insert/update Tasks
        ↓
 Dashboard
+```
 
-The existing database fields provide the foundation for this.
+## P3 - Finalization
 
-41. Duplicate Assignment Handling
+### 5. Deployment testing
 
-The external_id exists specifically to prevent duplicates.
+Verify:
 
-Example:
+- PostgreSQL
+- environment variables
+- sessions
+- database persistence
+- Render deployment
+- production error handling
 
-First sync:
+### 6. Demo/presentation polish
 
-assignment ID = 12345
-       ↓
-12345 does not exist
-       ↓
-Create task
+Prepare a clean end-to-end demonstration.
 
-Second sync:
+---
 
-assignment ID = 12345
-       ↓
-12345 already exists
-       ↓
-Do not create duplicate
+# 28. Recommended Development Order
 
-This is an important part of the eventual real Teams sync.
-
-42. Expected Final Student Experience
-
-                 STUDENT TASKBOARD
-                        │
-          ┌─────────────┴─────────────┐
-          │                           │
-       ACADEMIC                    CAMPUS
-          │                           │
-     Microsoft Teams                Clubs
-          │                           │
-     Assignments                    Events
-          │                           │
-          └─────────────┬─────────────┘
-                        │
-                 STUDENT DASHBOARD
-                        │
-             ┌──────────┼──────────┐
-             │          │          │
-           Tasks      Events     Alerts
-             │          │          │
-          Complete   Register    Bell
-
-43. What the Project Is NOT
-
-The project is not primarily:
-
-a generic to-do list
-
-an AI assistant
-
-an AI planner
-
-a productivity chatbot
-
-a notes application
-
-a college ERP replacement
-
-a replacement for Microsoft Teams
-
-a replacement for Google Forms
-
-Instead:
-
-It is a centralized student-facing layer that aggregates academic assignments and campus events from existing college communication channels.
-
-44. Why Microsoft Teams Matters
-
-Without Teams integration:
-
-Student enters task manually
-
-This becomes a normal task manager.
-
-With Teams integration:
-
-Teacher publishes assignment
-          ↓
-Teams
-          ↓
-TaskBoard automatically receives it
-
-The student does not have to manually recreate the assignment.
-
-That is the key distinction between the original project and the current concept.
-
-45. Why the Events Section Matters
-
-Instead of:
-
-WhatsApp
-Instagram
-Club groups
-Google Forms
-College messages
-
-students can browse:
-
-Student TaskBoard
-       ↓
-Campus Events
-       ↓
-Coding Club
-Atrangi Club
-College Events
-
-and register through the portal and/or the organizer's external form.
-
-46. Why Admins Matter
-
-The portal is not only a student task list.
-
-Clubs get a structured way to publish activities.
-
-The ecosystem becomes:
-
-Club Admin
-     ↓
-Publishes event
-     ↓
-Student TaskBoard
-     ↓
-Students discover event
-     ↓
-Students register
-     ↓
-Club sees registrations
-
-User types:
-
-STUDENT
-ADMIN
-
-Admin roles:
-
-SUPER ADMIN
-CLUB ADMIN
-
-47. Expected Impact
-
-The project aims to:
-
-reduce the need to search multiple platforms
-
-make academic assignments easier to find
-
-make campus events easier to discover
-
-provide a centralized view of upcoming activities
-
-simplify event registration
-
-give clubs a structured publishing interface
-
-reduce dependence on buried messages for finding information
-
-Avoid claiming:
-
-"The system will eliminate missed deadlines."
-
-Better wording:
-
-The system is intended to reduce the effort involved in finding and tracking academic and campus information.
-
-48. Current Presentation Structure
-
-The current presentation structure is:
-
-1. Problem Statement
-
-Explain scattered academic/event information.
-
-2. Survey Objective
-
-Explain why students were surveyed.
-
-3. Survey
-
-Show questions and methodology.
-
-4. Survey Analysis
-
-Show results and observations.
-
-5. Key Insights
-
-Explain what the responses revealed.
-
-6. Idea Proposal
-
-Introduce Student TaskBoard.
-
-7. Expected Impact
-
-Explain what the proposed system aims to improve.
-
-Unnecessary slides were intentionally removed, including:
-
-generic introduction
-
-"What makes it different?"
-
-overly detailed proposed workflow
-
-old workload/crunch score concepts
-
-49. One-Line Project Pitch
-
-If the professor asks:
-
-"What is Student TaskBoard?"
-
-Use:
-
-Student TaskBoard is a centralized college portal that brings students' academic assignments and campus events into one place by integrating assignment sources such as Microsoft Teams and providing a structured platform for clubs to publish and manage events.
-
-50. Short Pitch
-
-If you have about 10 seconds:
-
-It's a centralized student dashboard for academic assignments and college events, so students don't have to keep searching across multiple platforms.
-
-51. Recommended Development Order From Here
-
+```text
 1. Finish remaining HTML redesign
              ↓
 2. Fix dynamic notification bell
@@ -1585,16 +1204,203 @@ It's a centralized student dashboard for academic assignments and college events
              ↓
 7. Test deployment
              ↓
-8. Prepare Teams Graph integration layer
+8. Prepare Microsoft Graph integration
              ↓
 9. Presentation/demo polish
+```
 
-Do not start adding random features.
+Do not add unnecessary features. The current scope is already sufficient for a strong college mini-project.
 
-The project already has enough scope. The priority now is to make the existing system reliable, coherent and presentation-ready.
+---
 
-52. Final Project Architecture
+# 29. What the Project Is NOT
 
+Student TaskBoard is not primarily:
+
+- a generic to-do list
+- an AI assistant
+- an AI planner
+- a productivity chatbot
+- a notes application
+- a college ERP replacement
+- a replacement for Microsoft Teams
+- a replacement for Google Forms
+
+Instead:
+
+> **Student TaskBoard is a centralized student-facing layer that aggregates academic assignments and campus events from existing college communication channels.**
+
+---
+
+# 30. Why Teams Integration Matters
+
+Without Teams:
+
+```text
+Student enters task manually
+        ↓
+Normal task manager
+```
+
+With Teams:
+
+```text
+Teacher publishes assignment
+        ↓
+Microsoft Teams
+        ↓
+TaskBoard sync
+        ↓
+Assignment appears automatically
+```
+
+The student does not have to manually recreate the assignment.
+
+This is the key distinction between the original task manager and the current project.
+
+---
+
+# 31. Why the Events Module Matters
+
+Instead of:
+
+```text
+WhatsApp
+Instagram
+Club groups
+Google Forms
+College messages
+```
+
+students can use:
+
+```text
+Student TaskBoard
+       ↓
+Campus Events
+       ↓
+Coding Club
+Atrangi Club
+College Events
+```
+
+Students can discover events, register, and see their registered events.
+
+---
+
+# 32. Why the Admin System Matters
+
+The project is not only a student task list.
+
+Clubs get a structured way to publish activities.
+
+```text
+Club Admin
+     ↓
+Publishes event
+     ↓
+Student TaskBoard
+     ↓
+Students discover event
+     ↓
+Students register
+     ↓
+Club sees registrations
+```
+
+Role hierarchy:
+
+```text
+                 ADMIN
+                   │
+          ┌────────┴────────┐
+          │                 │
+    SUPER ADMIN        CLUB ADMIN
+          │                 │
+     All clubs         Own club only
+     All events        Own events
+```
+
+---
+
+# 33. Expected Impact
+
+The project aims to:
+
+- reduce the need to search multiple platforms
+- make academic assignments easier to find
+- make campus events easier to discover
+- provide a centralized view of upcoming activities
+- simplify event registration
+- give clubs a structured publishing interface
+- reduce dependence on buried messages for finding information
+
+Avoid saying:
+
+> “The system will eliminate missed deadlines.”
+
+Prefer:
+
+> **The system is intended to reduce the effort involved in finding and tracking academic and campus information.**
+
+---
+
+# 34. Presentation Context
+
+Current presentation structure:
+
+## 1. Problem Statement
+
+Explain scattered academic/event information.
+
+## 2. Survey Objective
+
+Explain why students were surveyed.
+
+## 3. Survey
+
+Show questions and methodology.
+
+## 4. Survey Analysis
+
+Show results and observations.
+
+## 5. Key Insights
+
+Explain what the responses revealed.
+
+## 6. Idea Proposal
+
+Introduce Student TaskBoard.
+
+## 7. Expected Impact
+
+Explain what the proposed system aims to improve.
+
+Intentionally removed:
+
+- generic introduction
+- “What makes it different?”
+- overly detailed proposed workflow
+- old workload/crunch score concepts
+
+---
+
+# 35. Project Pitch
+
+## One-line pitch
+
+> **Student TaskBoard is a centralized college portal that brings students' academic assignments and campus events into one place by integrating assignment sources such as Microsoft Teams and providing a structured platform for clubs to publish and manage events.**
+
+## 10-second pitch
+
+> **It's a centralized student dashboard for academic assignments and college events, so students don't have to keep searching across multiple platforms.**
+
+---
+
+# 36. Final Architecture
+
+```text
                          STUDENT TASKBOARD
                                 │
              ┌──────────────────┴──────────────────┐
@@ -1628,89 +1434,121 @@ The project already has enough scope. The priority now is to make the existing s
                              ↓
                        My Events
 
-
 * Currently DEMO importer.
   Real Microsoft Graph integration requires
   appropriate Microsoft/NMIMS tenant permissions.
+```
 
-53. Final Definition
+---
 
-Student TaskBoard is a Flask-based college portal designed to solve the problem of scattered academic and campus information by bringing assignments and college events into one centralized student dashboard. Academic assignments are intended to be imported from Microsoft Teams through Microsoft Graph, while clubs and college administrators can publish events, provide registration links, and manage student registrations. The current prototype includes student task management, a demo Teams importer, event discovery and registration, club-based admin management, notifications, and a PostgreSQL-ready database architecture.
+# 37. Final Project Definition
 
-Current Status
+> **Student TaskBoard is a Flask-based college portal designed to solve the problem of scattered academic and campus information by bringing assignments and college events into one centralized student dashboard. Academic assignments are intended to be imported from Microsoft Teams through Microsoft Graph, while clubs and college administrators can publish events, provide registration links, and manage student registrations. The current prototype includes student task management, a demo Teams importer, event discovery and registration, club-based admin management, notifications, and a PostgreSQL-ready database architecture.**
 
-Area
+---
 
-Status
+# 38. Current Status Snapshot
 
-Core Flask app
+| Area | Status |
+|---|---|
+| Flask backend | 🟢 Mostly complete |
+| Database models | 🟢 Complete |
+| Student login | 🟢 Functional |
+| Task management | 🟢 Functional |
+| Automatic priority | 🟢 Functional |
+| Events | 🟢 Functional |
+| Event registration | 🟢 Functional |
+| Admin system | 🟢 Functional |
+| Club permissions | 🟢 Functional |
+| UI redesign | 🟢 Mostly complete |
+| Notifications | 🟡 Needs dynamic implementation/final testing |
+| Teams demo importer | 🟢 Functional |
+| Real Microsoft Graph | 🔴 Pending permissions |
+| PostgreSQL support | 🟢 Prepared |
+| Deployment architecture | 🟢 Prepared |
+| Presentation structure | 🟢 Complete |
+| Final testing | 🟡 Remaining |
 
-Mostly complete
+---
 
-Database
+# 39. Immediate Next Actions
 
-Complete
+### Right now
 
-Student task management
+1. Finish remaining HTML redesign/review.
+2. Fix the notification system.
+3. Run through all student workflows.
+4. Run through all admin workflows.
+5. Check role-based access.
+6. Check database persistence.
+7. Test deployment.
 
-Functional
+### After the prototype is stable
 
-Automatic priority
+8. Work on real Microsoft Graph integration if permissions are available.
+9. Prepare the final project demo.
+10. Prepare final documentation/presentation.
 
-Functional
+---
 
-Events
+# 40. Important Development Rules
 
-Functional
+When continuing this project:
 
-Event registration
+- Keep the project focused.
+- Do not turn it into an AI product.
+- Do not add features just because they are technically possible.
+- Prefer practical college workflows.
+- Preserve the Flask + SQLAlchemy architecture unless there is a strong reason to change it.
+- Keep Microsoft Graph integration isolated from the rest of the application.
+- Do not bypass Microsoft/NMIMS permissions.
+- Keep student and admin permissions separate.
+- Keep Club Admins restricted to their own club.
+- Keep the UI consistent with the cream/orange/blue/black design system.
+- Use JetBrains Mono.
+- Avoid gradients and generic AI-dashboard styling.
+- Prefer copy-paste-ready, incremental code changes.
+- When changing templates, preserve existing routes and backend logic unless a backend change is actually required.
+- Test existing functionality after every meaningful change.
 
-Functional
+---
 
-Admin system
+# 41. Master Mental Model
 
-Functional
+The entire project can be remembered as:
 
-Club roles
+```text
+                 INFORMATION IS SCATTERED
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+     ACADEMIC                            CAMPUS
+          │                                 │
+   Microsoft Teams                      Clubs
+          │                                 │
+    Assignments                         Events
+          │                                 │
+          └────────────────┬────────────────┘
+                           ↓
+                  STUDENT TASKBOARD
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+        TASKS            EVENTS        NOTIFICATIONS
+          │                │
+       Complete         Register
+          │                │
+          └────────────────┘
+                           │
+                       DATABASE
+                           │
+                  PostgreSQL in production
+```
 
-Functional
+## Core purpose
 
-UI redesign
+> **Bring scattered college information into one practical student dashboard.**
 
-Mostly complete
+---
 
-Notifications
-
-Being corrected
-
-Teams demo importer
-
-Functional
-
-Real Microsoft Graph
-
-Pending permissions
-
-PostgreSQL support
-
-Prepared
-
-Deployment architecture
-
-Prepared
-
-Presentation
-
-Core structure complete
-
-Immediate next tasks
-
-Finish remaining HTML redesign/review.
-
-Fix the notification bell so it uses actual database data.
-
-Test all student and admin workflows.
-
-Test deployment/database behaviour.
-
-Then work on the real Microsoft Graph integration if the required Microsoft/NMIMS permissions become available.
+# END OF MASTER CONTEXT
